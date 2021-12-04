@@ -6,17 +6,22 @@ def mark_boards(boards, marks, n):
                 if boards[i][j][k] == n:
                     marks[i][j][k] = 1
 
-def check_wins(marks):
+def check_wins(marks, boards_won):
+    winners = set()
     for i in range(0, len(marks)):
+        if i in boards_won:
+            continue
         col_sums = [0] * 5
         for j in range(0, len(marks[i])):
             if sum(marks[i][j]) == len(marks[i][j]):
-                return i
+                winners.add(i)
+                break
             for k in range(0, len(marks[i][j])):
                 col_sums[k] += marks[i][j][k]
-        if any( (x == 5 for x in col_sums) ):
-            return i
-    return None
+        if not i in winners:
+            if any( (x == 5 for x in col_sums) ):
+                winners.add(i)
+    return winners
 
 def sum_unmarked(board, mark):
     s = 0
@@ -54,12 +59,20 @@ with open("4.txt") as f:
         if line_id == 6:
             line_id = 0        
 
+    last_unmarked = None
+    last_winner = None
+    boards_won = set()
     for n in numbers:
         mark_boards(boards, marks, n)
-        winner = check_wins(marks)
-        if winner is not None:
-            print('winner is board', winner, 'on num', n)
+        winners = check_wins(marks, boards_won)
+        for winner in winners:
+            boards_won.add(winner)
+            #print('winner is board', winner, 'on num', n)
             unmarked = sum_unmarked(boards[winner], marks[winner])
-            print('unmarked', unmarked)
-            print('part1', n * unmarked)
-            break
+            #print('unmarked', unmarked)
+            if last_unmarked is None:
+                print('part1', n * unmarked)
+            last_unmarked = unmarked
+            last_winner = n
+
+    print('part2', last_unmarked * last_winner)
