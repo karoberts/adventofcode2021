@@ -31,7 +31,20 @@ with open("5.txt") as f:
             for y in getrange(line, 1):
                 grid[(x,y)] += 1
 
-    #printg(grid)
-
     ct = sum( (1 if x > 1 else 0 for x in grid.values()))
     print('part1', ct)
+
+    grid = defaultdict(lambda : 0)
+    for line in lines:
+        if line[0][0] == line[1][0] or line[0][1] == line[1][1]:
+            for x in getrange(line, 0):
+                for y in getrange(line, 1):
+                    grid[(x,y)] += 1
+        else:
+            xcs = list(getrange(line, 0))
+            ycs = list(getrange(line, 1))
+            for p in range(0, len(xcs)):
+                grid[(xcs[p], ycs[p])] += 1
+
+    ct = sum( (1 if x > 1 else 0 for x in grid.values()))
+    print('part2', ct)
