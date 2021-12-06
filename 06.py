@@ -1,18 +1,27 @@
+from collections import defaultdict
 
 with open("6.txt") as f:
     fish = [int(x) for x in f.readline().strip().split(',')]
-fish = [int(x) for x in '3,4,3,1,2'.split(',')]
+#fish = [int(x) for x in '3,4,3,1,2'.split(',')]
 
-for day in range(0, 80):
-    new_fish = []
-    for f in fish:
-        if f == 0:
-            new_fish.append(8)
-            f = 7
+counts = defaultdict(lambda:0)
 
-        new_f = f - 1
-        new_fish.append(new_f)
+for f in fish:
+    counts[f] += 1
+counts[6] = 0
+counts[7] = 0
+counts[8] = 0
 
-    fish = new_fish
+totfish = len(fish)
 
-print('part1', len(fish))
+for day in range(0, 256):
+    zeros = counts[0]
+    for i in range(0, 8):
+        counts[i] = counts[i+1]
+    counts[6] += zeros
+    counts[8] = zeros
+
+    if day == 80:
+        print('part1', sum(counts.values()))
+
+print('part2', sum(counts.values()))
