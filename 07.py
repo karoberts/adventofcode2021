@@ -11,3 +11,10 @@ for i in range(mincrab, maxcrab+1):
 
 minpos = min(costs, key=costs.get)
 print('part1', costs[minpos])
+
+costs = dict()
+for i in range(mincrab, maxcrab+1):
+    costs[i] = sum([(abs(x - i) + 1) * abs(x - i) // 2 for x in crabs])
+
+minpos = min(costs, key=costs.get)
+print('part2', costs[minpos])
