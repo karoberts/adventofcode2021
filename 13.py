@@ -4,7 +4,7 @@ from math import prod
 def printg(grid, mx, my):
     for y in range(0, my + 1):
         for x in range(0, mx + 1):
-            print('#' if grid[(x, y)] else '.', end='')
+            print("\u2588" if grid[(x, y)] else '.', end='')
         print('')
 
 grid = defaultdict(lambda:False)
@@ -55,6 +55,5 @@ for f in folds:
     if first:
         print('part1', sum((1 for c in grid.values() if c)))
         first = False
-        break
 
-#printg(grid, max_x, max_y)
+printg(grid, max_x, max_y)
