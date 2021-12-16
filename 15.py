@@ -3,6 +3,12 @@ from collections import defaultdict
 
 # me = (x,y), tgt = (x,y), grid, _max=(max_x, max_y)
 def dijkstra(me, tgt, grid, _max):
+    I_COST = 0
+    I_X = 1
+    I_Y = 2
+    I_KEY = 3
+    I_VALID = 4
+
     def get_neighbors(x,y):
         tests = [ (1, 0), (-1, 0), (0, -1), (0, 1) ]
         ns = []
@@ -33,22 +39,22 @@ def dijkstra(me, tgt, grid, _max):
 
     while len(h) > 0:
         u = heapq.heappop(h)
-        if not u[4]:
+        if not u[I_VALID]:
             continue
-        inq.remove(u[3])
-        if u[1] == tgt[0] and u[2] == tgt[1]:
-            return u[0]
-        uk = u[3]
-        for v in get_neighbors(u[1], u[2]):
-            alt = dist[uk] + v[0]
-            if alt < dist[v[3]]:
-                dist[v[3]] = alt
-                prev[v[3]] = (uk, v[0], v[1], v[2])
-                entry = [alt, v[1], v[2], v[3], True]
-                if v[3] in inq:
-                    finder[v[3]][4] = False
-                inq.add(v[3])
-                finder[v[3]] = entry
+        inq.remove(u[I_KEY])
+        if u[I_X] == tgt[0] and u[I_Y] == tgt[1]:
+            return u[I_COST]
+        uk = u[I_KEY]
+        for v in get_neighbors(u[I_X], u[I_Y]):
+            alt = dist[uk] + v[I_COST]
+            if alt < dist[v[I_KEY]]:
+                dist[v[I_KEY]] = alt
+                prev[v[I_KEY]] = (uk, v[I_COST], v[I_X], v[I_Y])
+                entry = [alt, v[I_X], v[I_Y], v[I_KEY], True]
+                if v[I_KEY] in inq:
+                    finder[v[I_KEY]][I_VALID] = False
+                inq.add(v[I_KEY])
+                finder[v[I_KEY]] = entry
 
                 heapq.heappush(h, entry)
 
