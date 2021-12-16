@@ -66,7 +66,7 @@ def printg(grid, mx, my):
             print(grid[(x,y)], end='')
         print('')
 
-grid = defaultdict(lambda:False)
+grid = defaultdict(lambda:0)
 folds = []
 
 max_x = 0
@@ -87,3 +87,22 @@ with open('15.txt') as f:
 
 cost = dijkstra((0,0), (max_x, max_y), grid, (max_x, max_y))
 print('part1', cost)
+
+for iy in range(0, 5):
+    for ix in range(0, 5):
+        if ix == 0 and iy == 0:
+            continue
+        for y in range(0, max_y + 1):
+            for x in range(0, max_x + 1):
+                cur_v = grid[(x,y)]
+                n_v = cur_v + ix + iy
+                if n_v > 9:
+                    n_v -= 9
+                grid[(x + ix * (max_x + 1), y + iy * (max_y + 1))] = n_v
+
+nmax_x = (max_x + 1) * 5 - 1
+nmax_y = (max_y + 1) * 5 - 1
+#printg(grid, nmax_x, nmax_y)
+
+cost = dijkstra((0,0), (nmax_x, nmax_y), grid, (nmax_x, nmax_y))
+print('part2', cost)
