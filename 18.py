@@ -134,3 +134,11 @@ for i in range(1, len(lines)):
 
 print('part1', magnitude(_sum))
 
+sums = []
+for i in range(0, len(lines)):
+    for j in range(0, len(lines)):
+        if i == j: continue
+        _sum = add(lines[i], lines[j])
+        sums.append(magnitude(reduce(_sum)))
+
+print('part2', max(sums))
