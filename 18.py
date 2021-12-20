@@ -42,7 +42,7 @@ def reduce(sf):
         prev_num_i = None
         changed = False
         d = 0
-        while True:
+        while i < len(sf):
             if i == len(sf):
                 break
             if sf[i] is None:
@@ -52,7 +52,7 @@ def reduce(sf):
             elif sf[i] == ']':
                 d -= 1
             elif d == 5:
-                if isinstance(sf[i], int):
+                if isinstance(sf[i], int) and isinstance(sf[i+ 1], int):
                     #print('found num at 4 deep i=', i + 1, 'n=', sf[i], 'n+1=', sf[i + 1], 'prev=', prev_num_i)
                     if prev_num_i is not None:
                         sf[prev_num_i] += sf[i]
@@ -63,31 +63,48 @@ def reduce(sf):
                     sf[i + 1] = None
                     sf[i - 1] = None
                     sf[i + 2] = None
+                    sf = [x for x in sf if x is not None]
                     changed = True
                     break
 
             if isinstance(sf[i], int):
                 prev_num_i = i
-                if sf[i] >= 10:
-                    new_sf = []
-                    for _i in range(0, i):
-                        new_sf.append(sf[_i])
-                    new_sf.append('[')
-                    new_sf.append(sf[i] // 2)
-                    new_sf.append(math.ceil(sf[i]/2))
-                    new_sf.append(']')
-                    for _i in range(i + 1, len(sf)):
-                        new_sf.append(sf[_i])
-                    sf = new_sf
-                    changed = True
-                    break
-
             i += 1
+        
+        if not changed:
+            i = 0
+            while i < len(sf):
+                if i == len(sf):
+                    break
+                if sf[i] is None:
+                    pass
+                elif sf[i] == '[':
+                    d += 1
+                elif sf[i] == ']':
+                    d -= 1
 
+                if isinstance(sf[i], int):
+                    if sf[i] >= 10:
+                        #print('spltting', sf[i], 'at', i)
+                        new_sf = []
+                        for _i in range(0, i):
+                            new_sf.append(sf[_i])
+                        new_sf.append('[')
+                        new_sf.append(sf[i] // 2)
+                        new_sf.append(math.ceil(sf[i]/2))
+                        new_sf.append(']')
+                        for _i in range(i + 1, len(sf)):
+                            new_sf.append(sf[_i])
+                        sf = new_sf
+                        changed = True
+                        break
+                i += 1
+
+        #print('new sf', sf)
         if not changed:
             break
 
-    return [x for x in sf if x is not None]
+    return sf 
 
 def magnitude(sf):
     tot_mag = 0
@@ -105,7 +122,7 @@ def magnitude(sf):
                 break
     return sf[0]
 
-with open('18-test.txt') as f:
+with open('18.txt') as f:
     lines = [parse(x.strip()) for x in f.readlines()]
 
 _sum = lines[0]
@@ -113,7 +130,7 @@ for i in range(1, len(lines)):
     #print('adding', _sum, lines[i])
     _sum = add(_sum, lines[i])
     _sum = reduce(_sum)
-    print('got', _sum)
+    #print('got', _sum)
 
-print(_sum)
+print('part1', magnitude(_sum))
 
