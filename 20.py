@@ -15,7 +15,6 @@ def printg(grid, min_x, min_y, max_x, max_y):
 
 with open("20.txt") as f:
     pix_map = [x == '#' for x in f.readline().strip()]
-    print(pix_map[:5])
 
     f.readline()
 
@@ -42,23 +41,35 @@ def apply(grid, ng, min_x, min_y, max_x, max_y):
                     bits += '0'
             num = int(bits, 2)
             new_pix = pix_map[num]
-            if x == min_x and y == min_y:
-                print(x,y,num, bits, new_pix)
             ng[(x,y)] = new_pix
 
 #print(pix_map)
             
 #printg(grid, min_x, min_y, max_x, max_y)
 
-ng = defaultdict(lambda:True)
-apply(grid, ng, min_x, min_y, max_x, max_y)
-min_x -= 9
-min_y -= 9
-max_x += 9
-max_y += 9
-ng2 = defaultdict(lambda:True)
-apply(ng, ng2, min_x, min_y, max_x, max_y)
+g1 = grid
+for i in range(0, 2):
+    g2 = defaultdict(lambda:True) if i % 2 == 0 else defaultdict(lambda:False) 
+    apply(g1, g2, min_x, min_y, max_x, max_y)
+    min_x -= 1
+    min_y -= 1
+    max_x += 1
+    max_y += 1
+    g1 = g2
 
-printg(ng2, min_x, min_y, max_x, max_y)
-s = sum((1 if x == True else 0 for x in ng2.values()))
+#printg(ng2, min_x, min_y, max_x, max_y)
+s = sum((1 if x == True else 0 for x in g1.values()))
 print('part1', s)
+
+g1 = grid
+for i in range(0, 50):
+    g2 = defaultdict(lambda:True) if i % 2 == 0 else defaultdict(lambda:False) 
+    apply(g1, g2, min_x, min_y, max_x, max_y)
+    min_x -= 1
+    min_y -= 1
+    max_x += 1
+    max_y += 1
+    g1 = g2
+
+s = sum((1 if x == True else 0 for x in g1.values()))
+print('part2', s)
