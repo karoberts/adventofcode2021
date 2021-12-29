@@ -22,7 +22,7 @@ with open('24.txt') as f:
         elif sp[0] == 'eql':
             prog.append(('eql', sp[1], int(sp[2]) if isnum(sp[2]) else sp[2]))
 
-def run(n):            
+def run(n, part = None):            
     vars = {'w':0, 'x':0, 'y':0, 'z':0}
 
     inq = [int(c) for c in reversed(n)]
@@ -56,7 +56,7 @@ def run(n):
                 else:
                     cur_zfac += 1
                 if cur_zfac != zfac[d]:
-                    return d
+                    return False
                 #print(cur_zfac, zfac[d])
         elif p[0] == 'div':
             vars[p[1]] //= val(p[2], vars)
@@ -66,60 +66,74 @@ def run(n):
             vars[p[1]] = 1 if vars[p[1]] == val(p[2], vars) else 0
 
     if vars['z'] == 0:
-        print('par1', n)
-        quit()
-        return d
+        print(part, n)
+        return True
 
+def find_it(part):
+    if part == 'part1':
+        first_start = 9
+        start = 9
+        end = 0
+        step = -1
+    else:
+        first_start = 9 # lowest starts with 9, saves some time (~50 seconds starting at 1)
+        start = 1
+        end = 10
+        step = 1
 
-for t in range(9, 0, -1):
-    st = str(t)
-    for t2 in range(9, 0, -1):
-        st2 = st + str(t2)
-        for t3 in range(9, 0, -1):
-            st3 = st2 + str(t3)
-            for t4 in range(9, 0, -1):
-                st4 = st3 + str(t4)
-                if run(st4) > -1:
-                    continue
-                for t5 in range(9, 0, -1):
-                    st5 = st4 + str(t5)
-                    if run(st5) > -1:
+    for t in range(first_start, end, step):
+        st = str(t)
+        for t2 in range(start, end, step):
+            st2 = st + str(t2)
+            for t3 in range(start, end, step):
+                st3 = st2 + str(t3)
+                for t4 in range(start, end, step):
+                    st4 = st3 + str(t4)
+                    if run(st4) > -1:
                         continue
-                    for t6 in range(9, 0, -1):
-                        st6 = st5 + str(t6)
-                        if run(st6) > -1:
+                    for t5 in range(start, end, step):
+                        st5 = st4 + str(t5)
+                        if run(st5) > -1:
                             continue
-                        for t7 in range(9, 0, -1):
-                            st7 = st6 + str(t7)
-                            if run(st7) > -1:
+                        for t6 in range(start, end, step):
+                            st6 = st5 + str(t6)
+                            if run(st6) > -1:
                                 continue
-                            for t8 in range(9, 0, -1):
-                                st8 = st7 + str(t8)
-                                if run(st8) > -1:
+                            for t7 in range(start, end, step):
+                                st7 = st6 + str(t7)
+                                if run(st7) > -1:
                                     continue
-                                for t9 in range(9, 0, -1):
-                                    st9 = st8 + str(t9)
-                                    if run(st9) > -1:
+                                for t8 in range(start, end, step):
+                                    st8 = st7 + str(t8)
+                                    if run(st8) > -1:
                                         continue
-                                    for t10 in range(9, 0, -1):
-                                        st10 = st9 + str(t10)
-                                        if run(st10) > -1:
+                                    for t9 in range(start, end, step):
+                                        st9 = st8 + str(t9)
+                                        if run(st9) > -1:
                                             continue
-                                        for t11 in range(9, 0, -1):
-                                            st11 = st10 + str(t11)
-                                            if run(st11) > -1:
+                                        for t10 in range(start, end, step):
+                                            st10 = st9 + str(t10)
+                                            if run(st10) > -1:
                                                 continue
-                                            for t12 in range(9, 0, -1):
-                                                st12 = st11 + str(t12)
-                                                if run(st12) > -1:
+                                            for t11 in range(start, end, step):
+                                                st11 = st10 + str(t11)
+                                                if run(st11) > -1:
                                                     continue
-                                                for t13 in range(9, 0, -1):
-                                                    st13 = st12 + str(t13)
-                                                    if run(st13) > -1:
+                                                for t12 in range(start, end, step):
+                                                    st12 = st11 + str(t12)
+                                                    if run(st12) > -1:
                                                         continue
-                                                    for t14 in range(9, 0, -1):
-                                                        run(st13 + str(t14))
+                                                    for t13 in range(start, end, step):
+                                                        st13 = st12 + str(t13)
+                                                        if run(st13) > -1:
+                                                            continue
+                                                        for t14 in range(start, end, step):
+                                                            x = run(st13 + str(t14), part)
+                                                            if x:
+                                                                return
 
+find_it('part1')
+find_it('part2')
 quit()
 
 print('import sys')
