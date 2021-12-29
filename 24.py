@@ -1,3 +1,6 @@
+import sys
+import datetime
+from collections import defaultdict
 
 def isnum(v):
     return v.isnumeric() or (v.startswith('-') and v[1:].isnumeric())
@@ -19,33 +22,105 @@ with open('24.txt') as f:
         elif sp[0] == 'eql':
             prog.append(('eql', sp[1], int(sp[2]) if isnum(sp[2]) else sp[2]))
 
-vars = {'w':0, 'x':0, 'y':0, 'z':0}
+def run(n):            
+    vars = {'w':0, 'x':0, 'y':0, 'z':0}
 
-inq = [int(c) for c in reversed('13579246899999')]
+    inq = [int(c) for c in reversed(n)]
 
-def val(v, vs):
-    if isinstance(v, str):
-        return vs[v]
-    else:
-        return v
+    zfac = [ 1, 2, 3, 2, 3, 4, 3, 2, 1, 2, 3, 2, 1, 0 ]
+    cur_zfac = 0
 
-for p in prog:
-    #print(p)
-    if p[0] == 'inp':
-        vars[p[1]] = inq.pop()
-    elif p[0] == 'add':
-        vars[p[1]] += val(p[2], vars)
-    elif p[0] == 'mul':
-        vars[p[1]] *= val(p[2], vars)
-    elif p[0] == 'div':
-        vars[p[1]] //= val(p[2], vars)
-    elif p[0] == 'mod':
-        vars[p[1]] %= val(p[2], vars)
-    elif p[0] == 'eql':
-        vars[p[1]] = 1 if vars[p[1]] == val(p[2], vars) else 0
+    def val(v, vs):
+        if isinstance(v, str):
+            return vs[v]
+        else:
+            return v
 
-#print(vars)
-#quit()
+    d = -1 
+    for p in prog:
+        #print(p)
+        if p[0] == 'inp':
+            #print(vars)
+            if len(inq) == 0:
+                #print(n)
+                return -1
+            vars[p[1]] = inq.pop()
+            d += 1
+        elif p[0] == 'add':
+            vars[p[1]] += val(p[2], vars)
+        elif p[0] == 'mul':
+            vars[p[1]] *= val(p[2], vars)
+            if p[1] == 'z' and p[2] == 'y':
+                if vars['y'] == 1:
+                    cur_zfac -= 1
+                else:
+                    cur_zfac += 1
+                if cur_zfac != zfac[d]:
+                    return d
+                #print(cur_zfac, zfac[d])
+        elif p[0] == 'div':
+            vars[p[1]] //= val(p[2], vars)
+        elif p[0] == 'mod':
+            vars[p[1]] %= val(p[2], vars)
+        elif p[0] == 'eql':
+            vars[p[1]] = 1 if vars[p[1]] == val(p[2], vars) else 0
+
+    if vars['z'] == 0:
+        print('par1', n)
+        quit()
+        return d
+
+
+for t in range(9, 0, -1):
+    st = str(t)
+    for t2 in range(9, 0, -1):
+        st2 = st + str(t2)
+        for t3 in range(9, 0, -1):
+            st3 = st2 + str(t3)
+            for t4 in range(9, 0, -1):
+                st4 = st3 + str(t4)
+                if run(st4) > -1:
+                    continue
+                for t5 in range(9, 0, -1):
+                    st5 = st4 + str(t5)
+                    if run(st5) > -1:
+                        continue
+                    for t6 in range(9, 0, -1):
+                        st6 = st5 + str(t6)
+                        if run(st6) > -1:
+                            continue
+                        for t7 in range(9, 0, -1):
+                            st7 = st6 + str(t7)
+                            if run(st7) > -1:
+                                continue
+                            for t8 in range(9, 0, -1):
+                                st8 = st7 + str(t8)
+                                if run(st8) > -1:
+                                    continue
+                                for t9 in range(9, 0, -1):
+                                    st9 = st8 + str(t9)
+                                    if run(st9) > -1:
+                                        continue
+                                    for t10 in range(9, 0, -1):
+                                        st10 = st9 + str(t10)
+                                        if run(st10) > -1:
+                                            continue
+                                        for t11 in range(9, 0, -1):
+                                            st11 = st10 + str(t11)
+                                            if run(st11) > -1:
+                                                continue
+                                            for t12 in range(9, 0, -1):
+                                                st12 = st11 + str(t12)
+                                                if run(st12) > -1:
+                                                    continue
+                                                for t13 in range(9, 0, -1):
+                                                    st13 = st12 + str(t13)
+                                                    if run(st13) > -1:
+                                                        continue
+                                                    for t14 in range(9, 0, -1):
+                                                        run(st13 + str(t14))
+
+quit()
 
 print('import sys')
 print('x = y = z = w = 0')
@@ -74,6 +149,9 @@ z = z + d[1] + 14
 z = z * 26
 z = z + d[2] + 14
 
+z = (((d[0] + 6) * 26 + d[1] + 14) * 26) + d[2] + 14
+btw 5137 and 10761
+
 -8, 13, 15, -11, -4, -15, 14, 14, -1, -8, -14
 
 d[03] = z % 26 must be between 9 and 17
@@ -97,5 +175,10 @@ d[12] = z % 26 must be between 9 and 17
 d[13] = z % 26 must be between 15 and 23 
      (z % 26) == w + 14
 
+
+[ ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 9, 8|9, 1 ]
+
+z factor
+[ 1, 2, 3, 2, 3, 4, 3, 2, 1, 2, 3, 2, 1, 0 ]
 
 """
