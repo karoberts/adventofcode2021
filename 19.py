@@ -55,6 +55,7 @@ def apply_xforms(sN, orient):
 
 def find_match(s0, sN):
     used = set()
+    slns = set()
     for i in range(0, 24):
         test_coords = apply_xforms(sN, i)
         if test_coords[0] in used:
@@ -81,10 +82,17 @@ def find_match(s0, sN):
                             elif mz == 1: dz = abs(c[Z]) + abs(c0[Z])
                             elif mz == 2: dz = abs(c0[Z]) - abs(c[Z])
                             deltas[(dx,dy,dz)] += 1
+                            deltas[(-dx,-dy,-dz)] += 1
 
         for dd, ct in deltas.items():
             if ct >= 12:
-                print('found o=', i, dd, ct)
+                slns.add((i, dd))
+
+    for s in sorted(slns, key=lambda x:x[0]):
+        if s[1] == (68, -1246, -43):
+            print('!', s)
+        else:
+            print(s)
 
     return None
 
