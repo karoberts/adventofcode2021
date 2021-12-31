@@ -3,9 +3,6 @@ import heapq
 
 main_grid = dict()
 
-amphs = defaultdict(lambda:[])
-amph_coords = dict()
-
 X = 0
 Y = 1
 
@@ -15,11 +12,9 @@ with open("23.txt") as f:
         x = 0
         for c in line:
             if c == '\n': continue
-            main_grid[(x,y)] = c
 
-            if c in ['A', 'B', 'C', 'D']:
-                amphs[c].append((x,y))
-                amph_coords[(x,y)] = c
+            if c in ['A', 'B', 'C', 'D', '.']:
+                main_grid[(x,y)] = c
 
             x += 1
         y += 1
@@ -190,7 +185,7 @@ def dijkstra(grid):
 
 #printg(main_grid)
 
-# solves it pretty quickly, but takes about 54 seconds to find all solutions
+# solves it pretty quickly, but takes about 9 seconds to find all solutions
 cost = dijkstra(main_grid)
 
 print('part1', cost)
