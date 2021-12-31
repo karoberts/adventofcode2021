@@ -166,7 +166,6 @@ def dijkstra(grid):
 
     h = []
     heapq.heappush(h, [calc_dist(grid), 0, str(grid), grid, True])
-    #h.append([0, make_key(grid), grid, True])
 
     min_cost = 99999999
 
@@ -174,13 +173,12 @@ def dijkstra(grid):
         u = heapq.heappop(h)
         if not u[I_VALID]:
             continue
-        #inq.remove(u[I_KEY])
         if all_done(u[I_GRID]):
-            if u[I_COST] < min_cost:
-                print('min', u[I_COST])
+            # uncomment to get answer sooner
+            #if u[I_COST] < min_cost:
+            #    print('min', u[I_COST])
             min_cost = min(u[I_COST], min_cost)
             continue
-            #return min_cost
         uk = u[I_KEY]
         for v in get_neighbors(u[I_GRID], u[I_COST]):
             if cost[v[I_KEY]] < v[I_COST]:
@@ -192,6 +190,7 @@ def dijkstra(grid):
 
 #printg(main_grid)
 
+# solves it pretty quickly, but takes about 54 seconds to find all solutions
 cost = dijkstra(main_grid)
 
 print('part1', cost)
