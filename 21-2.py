@@ -26,8 +26,6 @@ def find(seq1, seq2, roll, p1):
     def nx(c, r):
         return (c + r - 1) % 10 + 1
 
-    next_turn = p1
-
     if roll < 0:
         k = str(seq1) + '|' + str(seq2)
         if k in memo:
@@ -39,31 +37,21 @@ def find(seq1, seq2, roll, p1):
             return (0, 1)
 
         ws = [0, 0]
-        for i in range(1, 4):
-            for j in range(1, 4):
-                for k in range(1, 4):
-                    w = find(seq1, seq2, i + j + k, next_turn)
-                    ws[0] += w[0]
-                    ws[1] += w[1]
+        for amt, nu in dice_rolls.items():
+            w = find(seq1, seq2, amt, p1)
+            ws[0] += w[0] * nu
+            ws[1] += w[1] * nu
 
         return ws
     else:
-        next_turn = not p1
-
         if p1:
             n1 = seq1 + [nx(seq1[-1], roll)]
             k = str(n1) + '|' + str(seq2)
-            if k in memo:
-                return memo[k]
-            r = find(n1, seq2, -1, next_turn)
-            memo[k] = r
+            r = memo[k] = find(n1, seq2, -1, not p1)
         else:
             n2 = seq2 + [nx(seq2[-1], roll)]
             k = str(seq1) + '|' + str(n2)
-            if k in memo:
-                return memo[k]
-            r = find(seq1, n2, -1, next_turn)
-            memo[k] = r
+            r = memo[k] = find(seq1, n2, -1, not p1)
         #if r[0] > 1000000000000 or r[1] > 1000000000000:
         #   print('memo', k, r)
         return r
