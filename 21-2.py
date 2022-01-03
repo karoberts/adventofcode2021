@@ -19,9 +19,14 @@ seq1 = [p1]
 seq2 = [p2]
 
 dice_rolls = {6: 7, 5: 6, 7: 6, 4: 3, 8: 3, 3: 1, 9: 1}
+last_double = None
 
 def find(seq1, seq2, roll, p1):
-    global dice_rolls
+    global dice_rolls, last_double
+
+    if len(seq1) == 5 and last_double != str(seq1):
+        memo.clear()
+        last_double = str(seq1)
 
     def nx(c, r):
         return (c + r - 1) % 10 + 1
