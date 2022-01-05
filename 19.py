@@ -145,7 +145,7 @@ converters = dict()
 scanners_o = dict()
 
 for i in range(0, len(scanners)):
-    for j in range(0, len(scanners)):
+    for j in range(i + 1, len(scanners)):
         if i == j: continue
         r = find_match(scanners[i], scanners[j])
         if r is None: continue
@@ -153,6 +153,13 @@ for i in range(0, len(scanners)):
         scanners_o[j] = r[1]
         #print(i, j, 'o=', r[0], 'sO=', r[1])
         chain[i].add(j)
+
+        r = find_match(scanners[j], scanners[i])
+        if r is None: continue
+        converters[(i, j)] = r
+        scanners_o[i] = r[1]
+        #print(i, j, 'o=', r[0], 'sO=', r[1])
+        chain[j].add(i)
 
 def convert_pts(sId, sPts, chain, converters, path = None):
     #if path is not None:
