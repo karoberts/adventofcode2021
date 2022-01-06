@@ -142,7 +142,6 @@ def find_0(i, chain, path):
 
 chain = defaultdict(set)
 converters = dict()
-scanners_o = dict()
 
 for i in range(0, len(scanners)):
     for j in range(i + 1, len(scanners)):
@@ -150,14 +149,12 @@ for i in range(0, len(scanners)):
         r = find_match(scanners[i], scanners[j])
         if r is None: continue
         converters[(j, i)] = r
-        scanners_o[j] = r[1]
         #print(i, j, 'o=', r[0], 'sO=', r[1])
         chain[i].add(j)
 
         r = find_match(scanners[j], scanners[i])
         if r is None: continue
         converters[(i, j)] = r
-        scanners_o[i] = r[1]
         #print(i, j, 'o=', r[0], 'sO=', r[1])
         chain[j].add(i)
 
@@ -177,20 +174,55 @@ def convert_pts(sId, sPts, chain, converters, path = None):
     xPts = apply_xforms(sPts, cv[0])
     xPts = adjust_pts(xPts, cv[1])
     return convert_pts(path[0], xPts, chain, converters, path[1:])
-    
-#for i in range(1, len(scanners)):
-#    print(i, find_0(i, chain, []))
+
+def convert_sloc3(sId, sPts, chain, converters, path):
+    #if path is not None:
+    #    print(f'   convert from {sId} to {path}')
+        #print(f'-> convert from {sId} to {path}')
+    if len(path) == 0:
+        cv = converters[(sId, 0)]
+        xPts = apply_xforms(sPts, cv[0])
+        xPts = adjust_pts(xPts, cv[1])
+        return xPts
+
+    cv = converters[(sId, path[0])]
+    xPts = apply_xforms(sPts, cv[0])
+    xPts = adjust_pts(xPts, cv[1])
+    return convert_pts(path[0], xPts, chain, converters, path[1:])
 
 found = set(scanners[0])
+scanner_locs = set([(0, (0,0,0))])
 
 for sId in range(1, len(scanners)):
     ps = convert_pts(sId, scanners[sId], chain, converters)
     found = found.union(ps)
 
+    path = find_0(sId, chain, [])
+    if len(path) == 0:
+        sloc = converters[sId, 0][1]
+    elif len(path) > 0:
+        cv = converters[(sId, path[0])]
+        sloc = convert_sloc3(path[0], [cv[1]], chain, converters, path[1:])[0]
+
+    scanner_locs.add((sId, sloc))
+
 #for p in sorted(found):
     #print(f'{p[X]},{p[Y]},{p[Z]}')
 
 print('part1', len(found))
+
+def manhat_dist(c1, c2):
+    return abs(c1[X] - c2[X]) + abs(c1[Y] - c2[Y]) + abs(c1[Z] - c2[Z])
+
+#for s in scanner_locs:
+    #print(s)
+
+max_dist = 0
+for s1 in scanner_locs:
+    for s2 in scanner_locs:
+        max_dist = max(max_dist, manhat_dist(s1[1], s2[1]))
+
+print('part2', max_dist)
 
 """
 
