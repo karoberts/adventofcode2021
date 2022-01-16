@@ -32,33 +32,47 @@ print('part1', sum((1 if x else 0 for x in grid.values())))
         ct -= find unique intersection between off cube and all prev 'on' cubes
 """
 
-def uniq_counts(instrs, i):
-    x = instrs[i]['x']
-    y = instrs[i]['y']
-    z = instrs[i]['z']
-    ct = abs(x[1] - x[0]) * abs(y[1] - y[0]) * abs(z[1] - z[0])
-    for j in range(i, -1, -1):
-        x2 = instrs[j]['x']
-        y2 = instrs[j]['y']
-        z2 = instrs[j]['z']
 
-        if x2[0] <= x[0] and x2[1] >= x[1] and y2[0] <= y[0] and y2[1] >= y[1] and z2[0] <= z[0] and z2[1] >= z[1]:
-            # 2 cube entirely envelopes 1 cube
-            ct = 0
-            break
 
-        if x[0] <= x2[0] and x[1] >= x2[1] and y[0] <= y2[0] and y[1] >= y2[1] and z[0] <= z2[0] and z[1] >= z2[1]:
-            # 1 cube entirely envelopes 2 cube
-            ct -= abs(x2[1] - x2[0]) * abs(y2[1] - y2[0]) * abs(z2[1] - z2[0])
-            continue
 
-        if x2[0] >= x[0] or x2[1] <= x[1] or y2[0] >= y[0] or y2[1] <= y[1] or z2[0] >= z[0] or z2[1] >= z[1]:
-            pass
-    return ct
+def cubes_intersect(c1, c2):
+    a = max(c1['x'][0], c1['x'][1]) > min(c2['x'][0], c2['x'][1]) 
+    b = min(c1['x'][0], c1['x'][1]) < max(c2['x'][0], c2['x'][1]) 
 
-cts = 0
+    c = max(c1['y'][0], c1['y'][1]) > min(c2['y'][0], c2['y'][1]) 
+    d = min(c1['y'][0], c1['y'][1]) < max(c2['y'][0], c2['y'][1]) 
+
+    e = max(c1['z'][0], c1['z'][1]) > min(c2['z'][0], c2['z'][1]) 
+    f = min(c1['z'][0], c1['z'][1]) < max(c2['z'][0], c2['z'][1]) 
+
+    return a and b and c and d and e and f
+
+def overlapping_vol(c1, c2):
+    return max(min(c2['x'][1],c1['x'][1])-max(c2['x'][0],c1['x'][0]),0) * max(min(c2['y'][1],c1['y'][1])-max(c2['y'][0],c1['y'][0]),0) * max(min(c2['z'][1],c1['z'][1])-max(c2['z'][0],c1['z'][0]),0)
+
+def cube_vol(c):
+    return abs(c['x'][0] - c['x'][1]) * abs(c['y'][0] - c['y'][1]) * abs(c['z'][0] - c['z'][1])
+
+for c in sorted(instrs, key=lambda x:x['x'][0]):
+    print(c)
+
+quit()
+
+on = 0
 for i in range(0, len(instrs)):
-    for j in range(0, len(instrs)):
-        if i == j: continue
-        cts += uniq_counts(instrs, i)
+    if instrs[i]['on']:
+        cube = cube_vol(instrs[i])
+        for j in range(i - 1, -1, -1):
+            if instrs[j]['on']:
+                if cubes_intersect(instrs[i], instrs[j]):
+                    cube -= overlapping_vol(instrs[i], instrs[j])
+        on += cube
+    else:
+        for j in range(i - 1, -1, -1):
+            if instrs[j]['on']:
+                if cubes_intersect(instrs[i], instrs[j]):
+                    on -= overlapping_vol(instrs[i], instrs[j])
+            else:
+                pass
 
+print('part2', on)
