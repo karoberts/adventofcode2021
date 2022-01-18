@@ -169,8 +169,9 @@ def dijkstra(grid):
         if not u[I_VALID]:
             continue
         if all_done(u[I_GRID]):
-            # uncomment to get answer sooner
-            #if u[I_COST] < min_cost:
+            # my heuristic isn't perfect, so it finds one solution first.  we take the second which is correct (to save time searching the whole queue)
+            if u[I_COST] < min_cost and min_cost < 9999999:
+                return u[I_COST]
             #    print('min', u[I_COST])
             min_cost = min(u[I_COST], min_cost)
             continue
