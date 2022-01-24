@@ -19,6 +19,7 @@
           "down" (recur (rest lines) x (+ d num))
           "up" (recur (rest lines) x (- d num)))))))
 
+(do-part1 lines)
 (time (println "part1" (do-part1 lines)))
   
 (defn do-part2
@@ -33,4 +34,5 @@
           "down" (recur (rest lines) x d (+ a num))
           "up" (recur (rest lines) x d (- a num)))))))
 
+(do-part2 lines)
 (time (println "part2" (do-part2 lines)))
