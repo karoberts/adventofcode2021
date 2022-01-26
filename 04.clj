@@ -71,14 +71,11 @@
         (first draws)))))
 
 (defn calc-winning-board [board]
-  (let [b (first board)
-        s (second board)
-        d (nth board 2)]
-    (* d
-      (reduce +
-        (filter
-          #(contains? s %1)
-          (flatten b))))))
+  (->> (first board)
+    (flatten)
+    (filter #(contains? (second board) %1))
+    (reduce +)
+    (* (nth board 2))))
 
 (def lines (clojure.string/split-lines (slurp "4.txt")))
 
