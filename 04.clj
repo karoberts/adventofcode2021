@@ -30,9 +30,11 @@
       (newline))
     (newline)))
 
-(defn make-boards [boards]
+(defn make-boards-obj [boards]
   (mapv
-    (fn[b] (apply conj #{} (flatten b)))
+    (fn[b] {
+      :board b
+      :unselected (apply conj #{} (flatten b)) })
     boards))
 
 (defn get-columns [board col]
@@ -56,31 +58,33 @@
         true
         false))))
 
-(defn check-winning-board [boards boardsets drawsSoFar draw]
-  (if (empty? boards)
-    nil
-    (if (board-wins (first boards) drawsSoFar)
-      [(first boards) (first boardsets) draw]
-      (check-winning-board (rest boards) (rest boardsets) drawsSoFar draw))))
-
-(defn find-winning-board [draws boards boardsets drawsSoFar prevDraw]
-  (if-let [winner (check-winning-board boards boardsets drawsSoFar prevDraw)]
-    winner
-    (if (empty? draws)
-      nil
-      (find-winning-board
-        (rest draws)
-        boards
-        (map #(disj %1 (first draws)) boardsets)
-        (conj drawsSoFar (first draws))
-        (first draws)))))
-
-(defn calc-winning-board [board]
-  (->> (first board)
+(defn calc-winning-board [board draw]
+  (->> (board :board)
     (flatten)
-    (filter #(contains? (second board) %1))
+    (filter #(contains? (board :unselected) %1))
     (reduce +)
-    (* (nth board 2))))
+    (* draw)))
+
+(defn find-last-winning-board [draws boards drawsSoFar prevDraw firstWinner lastWinner]
+  (if (empty? draws)
+    [firstWinner lastWinner]
+    (let [results (keep #(board-wins (%1 :board) drawsSoFar) boards)
+          winners (->> results
+            (map vector boards (repeat (count results) prevDraw))
+            (filter #(%1 2)))]
+      (find-last-winning-board
+        (rest draws)
+        (->> results
+          (map vector boards)
+          (filter #(not (%1 1)))
+          (map (fn[b] 
+            (update (b 0) :unselected disj (first draws)))))
+        (conj drawsSoFar (first draws))
+        (first draws)
+        (or firstWinner (first winners))
+        (or (first winners) lastWinner)))))
+
+; main
 
 (def lines (clojure.string/split-lines (slurp "4.txt")))
 
@@ -91,30 +95,8 @@
 
 (def boards (parse-boards (drop 2 lines)))
 
-(def winner (find-winning-board draws boards (make-boards boards) #{} -1))
-(println "part1" (calc-winning-board winner))
-
-(defn find-last-winning-board [draws boards boardsets drawsSoFar prevDraw lastWinner]
-  (if (empty? draws)
-    lastWinner
-    (let [results (keep #(board-wins %1 drawsSoFar) boards)
-          winners (->> results
-            (map vector boards boardsets (repeat (count results) prevDraw))
-            (filter #(%1 3)))]
-      (find-last-winning-board
-        (rest draws)
-        (->> results
-          (map vector boards)
-          (filter #(not (%1 1)))
-          (map #(%1 0)))
-        (->> results
-          (map vector boardsets)
-          (filter #(not (%1 1)))
-          (map #(%1 0))
-          (map #(disj %1 (first draws))))
-        (conj drawsSoFar (first draws))
-        (first draws)
-        (or (first winners) lastWinner)))))
-
-(def lastWinner (find-last-winning-board draws boards (make-boards boards) #{} -1 nil))
-(println "part2" (calc-winning-board lastWinner))
+(def winners (find-last-winning-board draws (make-boards-obj boards) #{} -1 nil nil))
+(def firstWinner (winners 0))
+(def lastWinner (winners 1))
+(println "part1" (calc-winning-board (firstWinner 0) (firstWinner 1)))
+(println "part2" (calc-winning-board (lastWinner 0) (lastWinner 1)))
