@@ -42,21 +42,26 @@
       (get-columns board (inc col))
       (map #(nth %1 col) board))))
 
+(defn board-wins [board drawsSoFar]
+  (if (some identity
+        (map
+          (fn[row] (every? #(contains? drawsSoFar %1) row))
+          board))
+    true
+    (let [cols (get-columns board 0)]
+      (if (some boolean
+            (map
+              (fn[row] (every? #(contains? drawsSoFar %1) row))
+              cols))
+        true
+        false))))
+
 (defn check-winning-board [boards boardsets drawsSoFar draw]
   (if (empty? boards)
     nil
-    (if (some identity
-          (map
-            (fn[row] (every? #(contains? drawsSoFar %1) row))
-            (first boards)))
+    (if (board-wins (first boards) drawsSoFar)
       [(first boards) (first boardsets) draw]
-      (let [cols (get-columns (first boards) 0)]
-        (if (some boolean
-              (map
-                (fn[row] (every? #(contains? drawsSoFar %1) row))
-                cols))
-          [(first boards) (first boardsets) draw]
-          (check-winning-board (rest boards) (rest boardsets) drawsSoFar draw))))))
+      (check-winning-board (rest boards) (rest boardsets) drawsSoFar draw))))
 
 (defn find-winning-board [draws boards boardsets drawsSoFar prevDraw]
   (if-let [winner (check-winning-board boards boardsets drawsSoFar prevDraw)]
@@ -89,3 +94,27 @@
 (def winner (find-winning-board draws boards (make-boards boards) #{} -1))
 (println "part1" (calc-winning-board winner))
 
+(defn find-last-winning-board [draws boards boardsets drawsSoFar prevDraw lastWinner]
+  (if (empty? draws)
+    lastWinner
+    (let [results (keep #(board-wins %1 drawsSoFar) boards)
+          winners (->> results
+            (map vector boards boardsets (repeat (count results) prevDraw))
+            (filter #(%1 3)))]
+      (find-last-winning-board
+        (rest draws)
+        (->> results
+          (map vector boards)
+          (filter #(not (%1 1)))
+          (map #(%1 0)))
+        (->> results
+          (map vector boardsets)
+          (filter #(not (%1 1)))
+          (map #(%1 0))
+          (map #(disj %1 (first draws))))
+        (conj drawsSoFar (first draws))
+        (first draws)
+        (or (first winners) lastWinner)))))
+
+(def lastWinner (find-last-winning-board draws boards (make-boards boards) #{} -1 nil))
+(println "part2" (calc-winning-board lastWinner))
