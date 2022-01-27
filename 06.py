@@ -21,7 +21,7 @@ for day in range(0, 256):
     counts[6] += zeros
     counts[8] = zeros
 
-    if day == 80:
+    if day == 79:
         print('part1', sum(counts.values()))
 
 print('part2', sum(counts.values()))
