@@ -26,10 +26,12 @@
 (def adj-map [ [-1 0] [0 -1] [1 0] [0 1] ])
 
 (defn find-adj-coord [grid x y]
-  (map
-    (fn[adj]
-      [(+ x (adj 0)) (+ y (adj 1))])
-    adj-map))
+  (remove
+    #(nil? (grid %1))
+    (map
+      (fn[adj]
+        [(+ x (adj 0)) (+ y (adj 1))])
+      adj-map)))
 
 (defn find-lowest-basins [grid]
   (filter
@@ -40,9 +42,7 @@
         (every? boolean
           (map
             #(> %1 v)
-            (remove
-              nil?
-              (map grid (find-adj-coord grid x y)))))))
+            (map grid (find-adj-coord grid x y))))))
     grid))
 
 (def lines (clojure.string/split-lines (slurp "9.txt")))
@@ -62,7 +62,7 @@
 (defn calc-basin-size
   ([grid coord] (calc-basin-size grid coord (atom #{})))
   ([grid coord visited]
-    (if (or (contains? @visited coord) (nil? (grid coord)) (= (grid coord) 9))
+    (if (or (contains? @visited coord) (= (grid coord) 9))
       0
       (let [x (coord 0)
             y (coord 1)
