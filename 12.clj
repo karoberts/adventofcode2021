@@ -41,3 +41,26 @@
 ;(println tree)
 (println "part1" (count-paths tree "start" #{"start"}))
 
+(defn get-paths2 [tree node visited path uniq smallcave]
+  (for [dest (tree node)]
+    (if (and (contains? visited dest) (= (visited dest) (if (= dest smallcave) 2 1)))
+      uniq
+      (if (= dest "end")
+        (conj uniq (clojure.string/join "|" path))
+        (get-paths2
+          tree
+          dest
+          (if (is-lowercase dest)
+            (assoc visited dest (inc (visited dest 0)))
+            visited)
+          (conj path dest)
+          uniq
+          smallcave)))))
+
+(defn count-unique-paths2 [tree]
+  (let [paths
+          (for [cave (filter #(and (is-lowercase %) (not= "end" %) (not= "start" %)) (keys tree))]
+            (get-paths2 tree "start" {"start" 1} [] [] cave))]
+    (->> paths flatten set count)))
+
+(println "part2" (count-unique-paths2 tree))
