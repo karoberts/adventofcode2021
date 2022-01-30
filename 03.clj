@@ -1,11 +1,7 @@
+(load-file "utils.clj")
+
 ; read file
-(def lines
-  (map
-    (fn[line] 
-      (map 
-        #(Integer/parseInt %)
-        (clojure.string/split line #"")))
-    (clojure.string/split-lines (slurp "3.txt"))))
+(def lines (utils/read-lines-map-split "3.txt" utils/parseInt))
 
 (defn count-bits
   ([lines] 
@@ -74,16 +70,15 @@
 (defn do-part-2 [lines pos len tgt]
   (if (or (= pos (dec len)) (= 1 (count lines)))
     (vec (first lines))
-    (do
-      (let [bitcount (count-bits-pos lines pos)
-            ct (count lines)
-            mostcommon (most-common bitcount ct)
-            leastcommon (least-common bitcount ct)]
-        (do-part-2
-          (filter-by-bits lines pos (if (= tgt 1) mostcommon leastcommon))
-          (inc pos)
-          len
-          tgt)))))
+    (let [bitcount (count-bits-pos lines pos)
+          ct (count lines)
+          mostcommon (most-common bitcount ct)
+          leastcommon (least-common bitcount ct)]
+      (do-part-2
+        (filter-by-bits lines pos (if (= tgt 1) mostcommon leastcommon))
+        (inc pos)
+        len
+        tgt))))
   
 (time
   (do

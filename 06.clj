@@ -1,9 +1,9 @@
-(def lines (clojure.string/split-lines (slurp "6.txt")))
+(load-file "utils.clj")
 
 (def fish
   (map
-    #(Integer/parseInt %)
-    (clojure.string/split (first lines) #",")))
+    utils/parseInt
+    (clojure.string/split (first (utils/read-lines "6.txt")) #",")))
 
 ;(def fish [3 4 3 1 2])
 

@@ -1,13 +1,13 @@
-(def lines (clojure.string/split-lines (slurp "7.txt")))
+(load-file "utils.clj")
 
 (def crabs
   (map
-    #(Integer/parseInt %)
-    (clojure.string/split (first lines) #",")))
+    utils/parseInt
+    (clojure.string/split (first (utils/read-lines "7.txt")) #",")))
     
 ;(def crabs [16 1 2 0 4 2 7 1 2 14])
 
-(defn abs [n] (max n (-' n)))
+(defn- abs [n] (max n (-' n)))
 
 (defn do-part1 [crabs]
   (apply min

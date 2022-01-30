@@ -1,11 +1,13 @@
+(load-file "utils.clj")
+
 ; read file
 (def lines
-  (map 
+  (utils/read-lines-map
+    "2.txt"
     (fn[line] 
       (let [cmd (clojure.string/split line #" ")
             num (Integer/parseInt (cmd 1))]
-        [(cmd 0) num]))
-    (clojure.string/split-lines (slurp "2.txt"))))
+        [(cmd 0) num]))))
 
 (defn do-part1 
   ([lines] (do-part1 lines 0 0))

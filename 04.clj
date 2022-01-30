@@ -1,3 +1,5 @@
+(load-file "utils.clj")
+
 (defn parse-board
   ([lines] (parse-board lines 0 []))
   ([lines y board]
@@ -9,7 +11,7 @@
         (conj 
           board
           (mapv
-            #(Integer/parseInt %)
+            utils/parseInt
             (clojure.string/split (clojure.string/trim (first lines)) #"\s+")))))))
 
 (defn parse-boards
@@ -86,11 +88,11 @@
 
 ; main
 
-(def lines (clojure.string/split-lines (slurp "4.txt")))
+(def lines (utils/read-lines "4.txt"))
 
 (def draws
   (map
-    #(Integer/parseInt %)
+    utils/parseInt
     (clojure.string/split (first lines) #",")))
 
 (def boards (parse-boards (drop 2 lines)))

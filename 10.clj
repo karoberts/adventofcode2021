@@ -1,4 +1,6 @@
-(def lines (clojure.string/split-lines (slurp "10.txt")))
+(load-file "utils.clj")
+
+(def lines (utils/read-lines "10.txt"))
 
 (def score_map {\) 3, \] 57, \} 1197, \> 25137})
 (def open_map {\( \), \[ \], \{ \}, \< \>})

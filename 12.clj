@@ -1,4 +1,6 @@
-(def lines (clojure.string/split-lines (slurp "12.txt")))
+(load-file "utils.clj")
+
+(def lines (utils/read-lines "12.txt"))
 
 (defn build-tree-from-edges [edges tree]
   (if (empty? edges)

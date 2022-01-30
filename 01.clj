@@ -1,8 +1,7 @@
+(load-file "utils.clj")
 
 ; read file
-(def lines 
-  (map #(Integer/parseInt %)
-    (clojure.string/split-lines (slurp "1.txt"))))
+(def lines (utils/read-lines-map "1.txt" utils/parseInt))
 
 ; reduce based
 (defn do-part1-reduce []
