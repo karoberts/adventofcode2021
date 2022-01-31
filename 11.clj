@@ -45,3 +45,16 @@
 
 ;(grids/print-grid (merge grid {:grid (ng 0)}))
 (println "part1" (ng 1))
+
+(defn find-all-flashed [g]
+  (loop [ng [g 0] step 1]
+    (let [r (run-step (ng 0))]
+      (if (every? zero? (vals (r 0)))
+        [(r 0) step]
+        (recur
+          r
+          (inc step))))))
+
+(def ng2 (find-all-flashed g))
+;(grids/print-grid (merge grid {:grid (ng2 0)}))
+(println "part2" (ng2 1))
