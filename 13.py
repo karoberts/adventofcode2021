@@ -1,5 +1,6 @@
 from collections import defaultdict
 from math import prod
+from letterrecognizer import recognize_letter
 
 def printg(grid, mx, my):
     for y in range(0, my + 1):
@@ -57,3 +58,16 @@ for f in folds:
         first = False
 
 printg(grid, max_x, max_y)
+
+grids = [defaultdict(lambda:False) for _ in range(0, 8)]
+
+for y in range(0, max_y):
+    for x in range(0, max_x):
+        letter_idx = x // 5
+        if letter_idx < 8:
+            grids[letter_idx][(x % 5, y)] = grid[(x,y)]
+
+print('part2 ', end='')
+for g in grids:
+    print(recognize_letter(g), end='')
+print()
